@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#116a6d" />
+    <meta name="description" content="A daily habit tracker with reminders, streaks, offline access, and install support." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Habit Harbor" />
+    <title>Habit Harbor</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Daily habit tracker</p>
+          <h1>Habit Harbor</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="installButton" type="button" hidden>
+            Install app
+          </button>
+          <button class="ghost-button" id="notifyButton" type="button">
+            Enable notifications
+          </button>
+          <button class="primary-button" id="resetDemoButton" type="button">
+            Load sample habits
+          </button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel tracker-panel" aria-labelledby="todayTitle">
+          <div class="app-status" id="appStatus" role="status" aria-live="polite"></div>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2 id="todayTitle">Keep the chain moving</h2>
+            </div>
+            <p class="date-pill" id="todayLabel"></p>
+          </div>
+
+          <div class="stats-grid" aria-label="Habit stats">
+            <div>
+              <span id="doneCount">0</span>
+              <p>done today</p>
+            </div>
+            <div>
+              <span id="dueCount">0</span>
+              <p>still due</p>
+            </div>
+            <div>
+              <span id="bestStreak">0</span>
+              <p>best streak</p>
+            </div>
+          </div>
+
+          <div class="progress-wrap" aria-label="Today's progress">
+            <div class="progress-info">
+              <span>Daily progress</span>
+              <strong id="progressText">0%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+            </div>
+          </div>
+
+          <div class="habit-list" id="habitList"></div>
+          <p class="empty-state" id="emptyState">
+            Add your first habit and a reminder time to start tracking.
+          </p>
+        </section>
+
+        <aside class="side-stack">
+          <section class="panel" aria-labelledby="newHabitTitle">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Setup</p>
+                <h2 id="newHabitTitle">Add a habit</h2>
+              </div>
+            </div>
+
+            <form class="habit-form" id="habitForm">
+              <label>
+                Habit name
+                <input
+                  id="habitName"
+                  maxlength="48"
+                  placeholder="Drink water"
+                  required
+                  type="text"
+                />
+              </label>
+
+              <label>
+                Reminder time
+                <input id="habitTime" required type="time" />
+              </label>
+
+              <label>
+                Overdue after
+                <select id="habitGrace">
+                  <option value="0">Right at reminder time</option>
+                  <option value="15">15 minutes</option>
+                  <option value="30" selected>30 minutes</option>
+                  <option value="60">1 hour</option>
+                  <option value="120">2 hours</option>
+                </select>
+              </label>
+
+              <label class="checkbox-row">
+                <input id="habitNotify" checked type="checkbox" />
+                <span>Send reminder notifications</span>
+              </label>
+
+              <button class="primary-button full-width" type="submit">
+                Add habit
+              </button>
+            </form>
+          </section>
+
+          <section class="panel" aria-labelledby="alertsTitle">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Reminders</p>
+                <h2 id="alertsTitle">Notification center</h2>
+              </div>
+              <button class="icon-button" id="clearAlertsButton" type="button" title="Clear alerts">
+                Clear
+              </button>
+            </div>
+            <div class="alert-list" id="alertList" aria-live="polite"></div>
+            <p class="muted" id="notificationHelp"></p>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <template id="habitTemplate">
+      <article class="habit-card">
+        <div class="habit-main">
+          <button class="check-button" type="button" aria-label="Toggle habit completion"></button>
+          <div>
+            <h3></h3>
+            <p class="habit-meta"></p>
+          </div>
+        </div>
+        <div class="habit-actions">
+          <span class="streak-pill"></span>
+          <button class="text-button delete-button" type="button">Delete</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
