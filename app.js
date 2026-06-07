@@ -1,4 +1,5 @@
 const STORAGE_KEY = "habit-harbor-state-v1";
+const COACH_HISTORY_KEY = "habit-harbor-coach-history-v1";
 const todayKey = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -54,6 +55,7 @@ const seedHabits = [
 ];
 
 let state = loadState();
+let coachHistory = loadCoachHistory();
 
 const elements = {
   alertList: document.querySelector("#alertList"),
@@ -61,9 +63,13 @@ const elements = {
   clearAlertsButton: document.querySelector("#clearAlertsButton"),
   coachEnergy: document.querySelector("#coachEnergy"),
   coachForm: document.querySelector("#coachForm"),
-  coachGoal: document.querySelector("#coachGoal"),
+  coachChatForm: document.querySelector("#coachChatForm"),
+  coachMessage: document.querySelector("#coachMessage"),
+  coachMessages: document.querySelector("#coachMessages"),
+  coachMode: document.querySelector("#coachMode"),
   coachMood: document.querySelector("#coachMood"),
   coachResponse: document.querySelector("#coachResponse"),
+  coachSendButton: document.querySelector("#coachSendButton"),
   dailyQuote: document.querySelector("#dailyQuote"),
   doneCount: document.querySelector("#doneCount"),
   dueCount: document.querySelector("#dueCount"),
@@ -97,6 +103,18 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadCoachHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(COACH_HISTORY_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCoachHistory() {
+  localStorage.setItem(COACH_HISTORY_KEY, JSON.stringify(coachHistory.slice(-16)));
 }
 
 function formatDate() {
@@ -313,6 +331,15 @@ function getCompletionSnapshot() {
   return { total, done, overdue, upcoming };
 }
 
+function getHabitSummary() {
+  return state.habits.map((habit) => ({
+    name: habit.name,
+    reminderTime: habit.reminderTime,
+    status: getHabitStatus(habit),
+    streak: currentStreak(habit)
+  }));
+}
+
 function getCoachAdvice({ mood, energy, goal }) {
   const snapshot = getCompletionSnapshot();
   const completionRate = snapshot.total ? Math.round((snapshot.done / snapshot.total) * 100) : 0;
@@ -388,6 +415,87 @@ function renderCoachResponse(cards = getCoachAdvice({ mood: "steady", energy: 3,
   });
 }
 
+function appendCoachMessage(role, text) {
+  coachHistory.push({
+    id: crypto.randomUUID(),
+    role,
+    text,
+    createdAt: new Date().toISOString()
+  });
+  coachHistory = coachHistory.slice(-16);
+  saveCoachHistory();
+  renderCoachMessages();
+}
+
+function renderCoachMessages() {
+  elements.coachMessages.innerHTML = "";
+
+  if (coachHistory.length === 0) {
+    elements.coachMessages.innerHTML =
+      '<p class="muted">Ask your coach for help with a habit, your energy, sleep, stress, or a small next step.</p>';
+    return;
+  }
+
+  coachHistory.forEach((message) => {
+    const item = document.createElement("div");
+    item.className = `coach-message ${message.role}`;
+    item.innerHTML = `<strong>${message.role === "user" ? "You" : "Coach"}</strong><p>${escapeHtml(message.text)}</p>`;
+    elements.coachMessages.appendChild(item);
+  });
+
+  elements.coachMessages.scrollTop = elements.coachMessages.scrollHeight;
+}
+
+async function requestOnlineCoach(message) {
+  const response = await fetch("/api/coach", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message,
+      mood: elements.coachMood.value,
+      energy: elements.coachEnergy.value,
+      habits: getHabitSummary(),
+      progress: getCompletionSnapshot()
+    })
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Online coach is not available yet.");
+  }
+
+  return data.reply;
+}
+
+function getFallbackCoachReply(message) {
+  const advice = getCoachAdvice({
+    mood: elements.coachMood.value,
+    energy: elements.coachEnergy.value,
+    goal: message
+  });
+  return advice.map((card) => `${card.title}: ${card.body}`).join("\n\n");
+}
+
+async function handleCoachChat(message) {
+  appendCoachMessage("user", message);
+  elements.coachSendButton.disabled = true;
+  elements.coachSendButton.textContent = "Thinking...";
+  elements.coachMode.textContent = "Connecting to online coach...";
+
+  try {
+    const reply = await requestOnlineCoach(message);
+    appendCoachMessage("coach", reply);
+    elements.coachMode.textContent = "Online AI coach active";
+  } catch {
+    appendCoachMessage("coach", getFallbackCoachReply(message));
+    elements.coachMode.textContent =
+      "Using local coach fallback until the online AI backend is deployed.";
+  } finally {
+    elements.coachSendButton.disabled = false;
+    elements.coachSendButton.textContent = "Send to coach";
+  }
+}
+
 function renderAlerts() {
   elements.alertList.innerHTML = "";
 
@@ -459,6 +567,7 @@ function render() {
   if (!elements.coachResponse.children.length) {
     renderCoachResponse();
   }
+  renderCoachMessages();
 }
 
 function toggleHabit(id) {
@@ -528,9 +637,17 @@ elements.coachForm.addEventListener("submit", (event) => {
   const cards = getCoachAdvice({
     mood: elements.coachMood.value,
     energy: elements.coachEnergy.value,
-    goal: elements.coachGoal.value
+    goal: ""
   });
   renderCoachResponse(cards);
+});
+
+elements.coachChatForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const message = elements.coachMessage.value.trim();
+  if (!message) return;
+  elements.coachMessage.value = "";
+  await handleCoachChat(message);
 });
 
 elements.installButton.addEventListener("click", async () => {

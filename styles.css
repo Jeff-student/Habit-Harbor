@@ -439,9 +439,93 @@ select:focus-visible {
   line-height: 1.45;
 }
 
+.coach-chat {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.coach-mode {
+  border: 1px solid rgba(255, 155, 98, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 155, 98, 0.1);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 9px 10px;
+}
+
+.coach-messages {
+  display: grid;
+  gap: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #071114;
+  padding: 10px;
+}
+
+.coach-message {
+  max-width: 92%;
+  border-radius: 8px;
+  padding: 10px 11px;
+}
+
+.coach-message.user {
+  justify-self: end;
+  background: rgba(69, 211, 194, 0.16);
+}
+
+.coach-message.coach {
+  justify-self: start;
+  background: rgba(255, 155, 98, 0.13);
+}
+
+.coach-message strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+
+.coach-message p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.coach-chat-form {
+  display: grid;
+  gap: 10px;
+}
+
+.coach-chat-form textarea {
+  width: 100%;
+  min-height: 92px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #071114;
+  color: var(--ink);
+  font-size: 16px;
+  padding: 10px;
+  resize: vertical;
+}
+
 .tiny {
   font-size: 0.78rem;
   line-height: 1.4;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .checkbox-row {

@@ -110,21 +110,30 @@
                 <input id="coachEnergy" min="1" max="5" value="3" type="range" />
               </label>
 
-              <label>
-                What do you want help with?
-                <textarea
-                  id="coachGoal"
-                  maxlength="180"
-                  placeholder="Example: staying consistent, sleeping better, moving more, feeling calmer"
-                ></textarea>
-              </label>
-
-              <button class="primary-button full-width" type="submit">
-                Ask coach
+              <button class="ghost-button full-width" type="submit">
+                Refresh quick guidance
               </button>
             </form>
 
             <div class="coach-response" id="coachResponse" aria-live="polite"></div>
+            <div class="coach-chat" aria-label="AI coach chat">
+              <div class="coach-mode" id="coachMode" role="status" aria-live="polite">
+                Online coach connects after Netlify setup.
+              </div>
+              <div class="coach-messages" id="coachMessages" aria-live="polite"></div>
+              <form class="coach-chat-form" id="coachChatForm">
+                <label class="sr-only" for="coachMessage">Message your coach</label>
+                <textarea
+                  id="coachMessage"
+                  maxlength="500"
+                  placeholder="Ask about sleep, stress, workouts, motivation, or your habits"
+                  required
+                ></textarea>
+                <button class="primary-button full-width" id="coachSendButton" type="submit">
+                  Send to coach
+                </button>
+              </form>
+            </div>
             <p class="muted tiny">
               General wellbeing guidance only. For medical or mental health emergencies, contact local emergency services or a qualified professional.
             </p>
