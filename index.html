@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#116a6d" />
+    <meta name="theme-color" content="#071114" />
     <meta name="description" content="A daily habit tracker with reminders, streaks, offline access, and install support." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Habit Harbor" />
     <title>Habit Harbor</title>
     <link rel="manifest" href="manifest.json" />
@@ -33,6 +33,14 @@
           </button>
         </div>
       </header>
+
+      <section class="quote-card" aria-labelledby="quoteTitle">
+        <div>
+          <p class="eyebrow">Daily spark</p>
+          <h2 id="quoteTitle">Today's motivation</h2>
+        </div>
+        <blockquote id="dailyQuote"></blockquote>
+      </section>
 
       <main class="layout">
         <section class="panel tracker-panel" aria-labelledby="todayTitle">
@@ -77,6 +85,51 @@
         </section>
 
         <aside class="side-stack">
+          <section class="panel coach-panel" aria-labelledby="coachTitle">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Personal coach</p>
+                <h2 id="coachTitle">Health and growth check-in</h2>
+              </div>
+            </div>
+
+            <form class="coach-form" id="coachForm">
+              <label>
+                How are you feeling?
+                <select id="coachMood">
+                  <option value="steady">Steady</option>
+                  <option value="motivated">Motivated</option>
+                  <option value="tired">Tired</option>
+                  <option value="stressed">Stressed</option>
+                  <option value="low">Low mood</option>
+                </select>
+              </label>
+
+              <label>
+                Energy today
+                <input id="coachEnergy" min="1" max="5" value="3" type="range" />
+              </label>
+
+              <label>
+                What do you want help with?
+                <textarea
+                  id="coachGoal"
+                  maxlength="180"
+                  placeholder="Example: staying consistent, sleeping better, moving more, feeling calmer"
+                ></textarea>
+              </label>
+
+              <button class="primary-button full-width" type="submit">
+                Ask coach
+              </button>
+            </form>
+
+            <div class="coach-response" id="coachResponse" aria-live="polite"></div>
+            <p class="muted tiny">
+              General wellbeing guidance only. For medical or mental health emergencies, contact local emergency services or a qualified professional.
+            </p>
+          </section>
+
           <section class="panel" aria-labelledby="newHabitTitle">
             <div class="section-heading compact">
               <div>

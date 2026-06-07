@@ -2,6 +2,8 @@
 
 A mobile-ready habit tracker with daily checkoffs, streaks, reminder times, overdue alerts, optional browser notifications, offline support, and home-screen install support.
 
+The app uses a dark mobile-first interface, shows a new motivational quote each day, and includes a private local coach for habit, health, and personal growth guidance.
+
 ## Run it
 
 From this folder:
@@ -37,6 +39,12 @@ Use **Enable notifications** in the app. Reminders are checked once per minute w
 Mobile browsers may pause web apps in the background. For guaranteed all-day background push notifications, the next step would be a hosted backend or native mobile wrapper.
 
 Your habits are stored in browser `localStorage` on the same device.
+
+## Personal coach
+
+The coach runs locally in the browser. It looks at today's habit progress plus your mood, energy, and focus text to suggest practical next steps. It does not send your check-in to a server.
+
+The coach gives general wellbeing guidance only. For medical, mental health, or emergency support, contact a qualified professional or local emergency services.
 
 ## Offline support
 

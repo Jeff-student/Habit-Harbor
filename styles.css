@@ -1,15 +1,18 @@
 :root {
-  --bg: #f6f3ed;
-  --ink: #1f2933;
-  --muted: #65717e;
-  --line: #d9d2c5;
-  --panel: #fffdf8;
-  --brand: #116a6d;
-  --brand-strong: #0b4f52;
-  --accent: #d45d36;
-  --ok: #2f855a;
-  --warn: #b7791f;
-  --shadow: 0 18px 45px rgba(31, 41, 51, 0.12);
+  color-scheme: dark;
+  --bg: #071114;
+  --ink: #f4fbf8;
+  --muted: #a8bbb7;
+  --line: #254146;
+  --panel: #101d21;
+  --panel-soft: #13272c;
+  --brand: #45d3c2;
+  --brand-strong: #8ff3e6;
+  --accent: #ff9b62;
+  --ok: #5ee08d;
+  --warn: #ffbf69;
+  --danger: #ff7a7a;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
 }
 
 * {
@@ -21,8 +24,8 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   background:
-    linear-gradient(135deg, rgba(17, 106, 109, 0.13), transparent 34%),
-    linear-gradient(225deg, rgba(212, 93, 54, 0.11), transparent 32%),
+    linear-gradient(135deg, rgba(69, 211, 194, 0.16), transparent 34%),
+    linear-gradient(225deg, rgba(255, 155, 98, 0.12), transparent 32%),
     var(--bg);
   color: var(--ink);
   font-family:
@@ -72,6 +75,34 @@ select:focus-visible {
   margin-bottom: 24px;
 }
 
+.quote-card {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 20px;
+  border: 1px solid rgba(69, 211, 194, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(69, 211, 194, 0.12), transparent 42%),
+    var(--panel);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+}
+
+.quote-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.quote-card blockquote {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  font-weight: 750;
+  line-height: 1.35;
+}
+
 .topbar h1,
 .section-heading h2 {
   margin: 0;
@@ -112,8 +143,8 @@ select:focus-visible {
 }
 
 .panel {
-  background: rgba(255, 253, 248, 0.92);
-  border: 1px solid rgba(217, 210, 197, 0.9);
+  background: rgba(16, 29, 33, 0.94);
+  border: 1px solid rgba(69, 211, 194, 0.18);
   border-radius: 8px;
   box-shadow: var(--shadow);
   padding: 22px;
@@ -128,9 +159,9 @@ select:focus-visible {
   align-items: center;
   min-height: 32px;
   margin-bottom: 16px;
-  border: 1px solid rgba(17, 106, 109, 0.24);
+  border: 1px solid rgba(69, 211, 194, 0.24);
   border-radius: 999px;
-  background: rgba(17, 106, 109, 0.08);
+  background: rgba(69, 211, 194, 0.09);
   color: var(--brand-strong);
   font-size: 0.86rem;
   font-weight: 800;
@@ -218,7 +249,7 @@ select:focus-visible {
   height: 12px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e6ded0;
+  background: #1c3338;
 }
 
 .progress-bar {
@@ -242,18 +273,18 @@ select:focus-visible {
   min-height: 86px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fffaf1;
+  background: var(--panel-soft);
   padding: 14px;
 }
 
 .habit-card.done {
-  background: #f1fbf5;
-  border-color: rgba(47, 133, 90, 0.38);
+  background: rgba(94, 224, 141, 0.12);
+  border-color: rgba(94, 224, 141, 0.4);
 }
 
 .habit-card.overdue {
-  background: #fff6eb;
-  border-color: rgba(183, 121, 31, 0.5);
+  background: rgba(255, 191, 105, 0.12);
+  border-color: rgba(255, 191, 105, 0.5);
 }
 
 .habit-main {
@@ -317,7 +348,7 @@ select:focus-visible {
 
 .primary-button {
   background: var(--brand);
-  color: #fff;
+  color: #062023;
 }
 
 .primary-button:hover {
@@ -326,7 +357,7 @@ select:focus-visible {
 
 .ghost-button,
 .icon-button {
-  background: #fffdf8;
+  background: #0b171a;
   border-color: var(--line);
   color: var(--ink);
 }
@@ -345,7 +376,8 @@ select:focus-visible {
   gap: 14px;
 }
 
-.habit-form label {
+.habit-form label,
+.coach-form label {
   display: grid;
   gap: 7px;
   color: var(--muted);
@@ -354,14 +386,62 @@ select:focus-visible {
 }
 
 .habit-form input,
-.habit-form select {
+.habit-form select,
+.coach-form input,
+.coach-form select,
+.coach-form textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: white;
+  background: #071114;
   color: var(--ink);
   padding: 9px 10px;
+}
+
+.coach-form {
+  display: grid;
+  gap: 14px;
+}
+
+.coach-form textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.coach-form input[type="range"] {
+  accent-color: var(--brand);
+  padding: 0;
+}
+
+.coach-response {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.coach-card {
+  border: 1px solid rgba(69, 211, 194, 0.2);
+  border-radius: 8px;
+  background: rgba(69, 211, 194, 0.08);
+  padding: 12px;
+}
+
+.coach-card strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--brand-strong);
+}
+
+.coach-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.tiny {
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .checkbox-row {
@@ -384,7 +464,7 @@ select:focus-visible {
 .alert-item {
   border-left: 4px solid var(--accent);
   border-radius: 6px;
-  background: #fff6eb;
+  background: rgba(255, 155, 98, 0.12);
   padding: 10px 12px;
 }
 
@@ -411,6 +491,7 @@ select:focus-visible {
 
 @media (max-width: 860px) {
   .topbar,
+  .quote-card,
   .layout,
   .habit-card,
   .habit-actions {
@@ -449,6 +530,11 @@ select:focus-visible {
 
   .topbar h1 {
     font-size: 2.15rem;
+  }
+
+  .quote-card {
+    gap: 10px;
+    padding: 15px;
   }
 
   .topbar-actions {

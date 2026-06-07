@@ -8,6 +8,21 @@ const todayKey = () => {
 };
 let installPrompt = null;
 
+const dailyQuotes = [
+  "Small promises kept daily become a life you can trust.",
+  "Do the next right thing. Let momentum find you there.",
+  "You do not need a perfect day. You need one honest action.",
+  "Your future self is built by the quiet choices nobody sees.",
+  "Energy follows motion. Start small and let the body remember.",
+  "Consistency is not intensity. It is returning without drama.",
+  "Better living starts with one repeatable act of care.",
+  "A calm mind grows from tiny moments of attention.",
+  "Make the healthy choice easier than the old pattern.",
+  "Progress is allowed to be gentle and still be real.",
+  "The goal is not to become someone else. It is to take better care of you.",
+  "One completed habit is proof that the day can still turn toward you."
+];
+
 const seedHabits = [
   {
     id: crypto.randomUUID(),
@@ -44,6 +59,12 @@ const elements = {
   alertList: document.querySelector("#alertList"),
   bestStreak: document.querySelector("#bestStreak"),
   clearAlertsButton: document.querySelector("#clearAlertsButton"),
+  coachEnergy: document.querySelector("#coachEnergy"),
+  coachForm: document.querySelector("#coachForm"),
+  coachGoal: document.querySelector("#coachGoal"),
+  coachMood: document.querySelector("#coachMood"),
+  coachResponse: document.querySelector("#coachResponse"),
+  dailyQuote: document.querySelector("#dailyQuote"),
   doneCount: document.querySelector("#doneCount"),
   dueCount: document.querySelector("#dueCount"),
   emptyState: document.querySelector("#emptyState"),
@@ -276,6 +297,97 @@ function renderStats() {
   elements.progressBar.setAttribute("aria-valuenow", String(percent));
 }
 
+function renderDailyQuote() {
+  const date = new Date();
+  const dayNumber = Math.floor(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000
+  );
+  elements.dailyQuote.textContent = dailyQuotes[dayNumber % dailyQuotes.length];
+}
+
+function getCompletionSnapshot() {
+  const total = state.habits.length;
+  const done = state.habits.filter(isDone).length;
+  const overdue = state.habits.filter((habit) => getHabitStatus(habit) === "overdue").length;
+  const upcoming = state.habits.filter((habit) => getHabitStatus(habit) === "upcoming").length;
+  return { total, done, overdue, upcoming };
+}
+
+function getCoachAdvice({ mood, energy, goal }) {
+  const snapshot = getCompletionSnapshot();
+  const completionRate = snapshot.total ? Math.round((snapshot.done / snapshot.total) * 100) : 0;
+  const goalText = goal.trim();
+  const cards = [];
+
+  if (snapshot.total === 0) {
+    cards.push({
+      title: "Start smaller than your ambition",
+      body: "Add one habit that takes under two minutes. A tiny reliable habit beats a perfect plan that never starts."
+    });
+  } else if (completionRate === 100) {
+    cards.push({
+      title: "Protect the streak",
+      body: "You are complete today. Keep tomorrow easy by preparing the first step now, like placing water, shoes, or a notebook where you will see it."
+    });
+  } else if (snapshot.overdue > 0) {
+    cards.push({
+      title: "Rescue the day",
+      body: `You have ${snapshot.overdue} overdue habit${snapshot.overdue === 1 ? "" : "s"}. Pick the fastest one and do a lighter version right now.`
+    });
+  } else {
+    cards.push({
+      title: "Use your next reminder",
+      body: `${completionRate}% is done today. Keep the bar low enough that showing up feels possible, then let the streak do the heavy lifting.`
+    });
+  }
+
+  if (mood === "stressed") {
+    cards.push({
+      title: "Calm first, optimize second",
+      body: "Take 60 seconds for slow breathing before chasing productivity. A regulated nervous system makes better choices."
+    });
+  } else if (mood === "tired" || Number(energy) <= 2) {
+    cards.push({
+      title: "Choose recovery effort",
+      body: "Make today's habits gentler: shorter movement, earlier sleep, water, sunlight, and one small win. Low energy still deserves care."
+    });
+  } else if (mood === "low") {
+    cards.push({
+      title: "Aim for contact with life",
+      body: "Do one grounding action: shower, step outside, text someone safe, or clean one surface. If this feeling gets heavy or unsafe, reach out to a professional or emergency support."
+    });
+  } else if (mood === "motivated") {
+    cards.push({
+      title: "Spend motivation wisely",
+      body: "Use the extra drive to make tomorrow easier, not harder. Prep your environment instead of adding five new habits at once."
+    });
+  } else {
+    cards.push({
+      title: "Steady is powerful",
+      body: "A steady day is perfect for repetition. Keep your promise boring, repeatable, and easy to restart."
+    });
+  }
+
+  if (goalText) {
+    cards.push({
+      title: "Your focus",
+      body: `For "${goalText}", choose one action you can finish in 10 minutes today. The coach move is clarity plus repetition.`
+    });
+  }
+
+  return cards;
+}
+
+function renderCoachResponse(cards = getCoachAdvice({ mood: "steady", energy: 3, goal: "" })) {
+  elements.coachResponse.innerHTML = "";
+  cards.forEach((card) => {
+    const node = document.createElement("div");
+    node.className = "coach-card";
+    node.innerHTML = `<strong>${escapeHtml(card.title)}</strong><p>${escapeHtml(card.body)}</p>`;
+    elements.coachResponse.appendChild(node);
+  });
+}
+
 function renderAlerts() {
   elements.alertList.innerHTML = "";
 
@@ -336,6 +448,7 @@ function updateAppStatus() {
 }
 
 function render() {
+  renderDailyQuote();
   elements.todayLabel.textContent = formatDate();
   renderHabits();
   renderStats();
@@ -343,6 +456,9 @@ function render() {
   renderNotificationHelp();
   renderInstallButton();
   updateAppStatus();
+  if (!elements.coachResponse.children.length) {
+    renderCoachResponse();
+  }
 }
 
 function toggleHabit(id) {
@@ -405,6 +521,16 @@ elements.notifyButton.addEventListener("click", async () => {
   if (!("Notification" in window)) return;
   await Notification.requestPermission();
   renderNotificationHelp();
+});
+
+elements.coachForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const cards = getCoachAdvice({
+    mood: elements.coachMood.value,
+    energy: elements.coachEnergy.value,
+    goal: elements.coachGoal.value
+  });
+  renderCoachResponse(cards);
 });
 
 elements.installButton.addEventListener("click", async () => {
