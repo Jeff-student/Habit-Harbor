@@ -486,10 +486,10 @@ async function handleCoachChat(message) {
     const reply = await requestOnlineCoach(message);
     appendCoachMessage("coach", reply);
     elements.coachMode.textContent = "Online AI coach active";
-  } catch {
+  } catch (error) {
     appendCoachMessage("coach", getFallbackCoachReply(message));
     elements.coachMode.textContent =
-      "Using local coach fallback until the online AI backend is deployed.";
+      `Using local fallback. Online coach error: ${error.message}`;
   } finally {
     elements.coachSendButton.disabled = false;
     elements.coachSendButton.textContent = "Send to coach";
